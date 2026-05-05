@@ -23,3 +23,14 @@ app.post("/api/generate", (req, res) => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
+app.get("/api/test", (req, res) => {
+  const topic = req.query.topic;
+
+  if (!topic) {
+    return res.send("اكتب ?topic=شيء في الرابط");
+  }
+
+  const tweet = `🔥 ${topic} موضوع مهم اليوم يستحق المتابعة`;
+
+  res.send(tweet);
+});
