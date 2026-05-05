@@ -34,3 +34,14 @@ app.get("/api/test", (req, res) => {
 
   res.send(tweet);
 });
+app.get("/api/generate", async (req, res) => {
+  const topic = req.query.topic;
+
+  if (!topic) {
+    return res.send("اكتب ?topic=أي شيء");
+  }
+
+  const tweet = `🔥 ${topic} موضوع مهم اليوم يستحق المتابعة`;
+
+  res.send(tweet);
+});
