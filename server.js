@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔥 Gemini AI
+// Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // الصفحة الرئيسية
@@ -18,50 +18,48 @@ app.get("/", (req, res) => {
   res.send("Twitter AI System is running");
 });
 
-// 🔥 API توليد التغريدات
+// API توليد التغريدات
 app.post("/api/generate", async (req, res) => {
   try {
     const { topic } = req.body;
 
-    // التحقق من الموضوع
     if (!topic) {
       return res.status(400).json({
         error: "topic is required",
       });
     }
 
-    // 🔥 Prompt احترافي
+    // Prompt احترافي
     const prompt = `
-أنت كاتب محتوى احترافي على تويتر (X).
+أنت كاتب تغريدات احترافي على تويتر (X).
 
-اكتب تغريدة جذابة وقوية عن:
+اكتب تغريدة قصيرة وجذابة عن:
 ${topic}
 
 القواعد:
-- قصيرة (1 إلى 3 سطور)
-- أسلوب شبابي وطبيعي
-- استخدم إيموجي مناسبة 🔥✨📌
-- اجعلها تفاعلية
-- أضف هاشتاق أو اثنين
-- لا تكن رسميًا جدًا
+- قصيرة
+- شبابية
+- فيها إيموجي
+- فيها هاشتاقات
 `;
 
-    // 🔥 تشغيل Gemini
+    // Gemini model
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
     });
 
+    // Generate content
     const result = await model.generateContent(prompt);
 
     const text = result.response.text();
 
-    // إرسال النتيجة
+    // إرسال الرد
     return res.json({
       text,
     });
 
   } catch (error) {
-    console.error("AI Error:", error);
+    console.error("Generate Error:", error);
 
     return res.status(500).json({
       error: "AI generation failed",
@@ -73,5 +71,5 @@ ${topic}
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
