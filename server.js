@@ -12,33 +12,59 @@ app.get("/", (req, res) => {
   res.send("Twitter AI System is running 🚀");
 });
 
-// API AI الحقيقي
 app.post("/api/generate", async (req, res) => {
-  const { topic } = req.body;
-
-  if (!topic) {
-    return res.json({ error: "no topic provided" });
-  }
-
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const { topic } = req.body;
 
-    const result = await model.generateContent(
-      `اكتب تغريدة قصيرة ومميزة عن: ${topic}`
-    );
+    if (!topic) {
+      return res.status(400).json({ error: "topic is required" });
+    }
 
-    const response = await result.response;
+    // 🔥 هذا هو الـ Prompt الذكي
+    const prompt = `
+أنت كاتب محتوى احترافي على تويتر (X).
 
-    res.json({
-      tweet: response.text()
+اكتب تغريدة قوية وجذابة عن: ${topic}
+
+القواعد:
+- قصيرة (1 إلى 3 سطور فقط)
+- أسلوب شبابي وطبيعي
+- فيها إيموجي مناسب 🔥✨📌
+- اجعلها تثير التفاعل أو السؤال
+- أضف هاشتاق أو اثنين في النهاية
+- لا تكن رسمي أو تقريري
+`;
+
+    // 🔥 هنا استدعاء الذكاء الاصطناعي (عدّل حسب مزودك)
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      }),
     });
 
-  } catch (err) {
-    res.json({ error: err.message });
-  }
-});
+    const data = await response.json();
 
-// تشغيل السيرفر
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+    const text = data.choices?.[0]?.message?.content || "Error generating tweet";
+
+    return res.json({
+      text,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "Server error",
+    });
+  }
 });
