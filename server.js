@@ -1,3 +1,9 @@
+import express from "express";
+import cors from "cors";
+import fetch from "node-fetch";
+import dotenv from "dotenv";
+
+dotenv.config();
 app.post("/api/generate", async (req, res) => {
   try {
     const { topic } = req.body;
