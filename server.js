@@ -23,6 +23,7 @@ app.post("/api/generate", async (req, res) => {
   try {
     const { topic } = req.body;
 
+    // تحقق من الإدخال
     if (!topic) {
       return res.status(400).json({
         error: "topic is required",
@@ -37,23 +38,26 @@ app.post("/api/generate", async (req, res) => {
 ${topic}
 
 القواعد:
-- قصيرة
-- شبابية
-- فيها إيموجي
-- فيها هاشتاقات
+- قصيرة (1-3 سطور)
+- أسلوب شبابي
+- استخدم إيموجي 🔥✨📌
+- أضف هاشتاق أو اثنين
+- اجعلها تفاعلية
 `;
 
-    // Gemini model
+    // موديل Gemini
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
     });
 
-    // Generate content
+    // توليد المحتوى
     const result = await model.generateContent(prompt);
 
-    const text = result.response.text();
+    const response = await result.response;
 
-    // إرسال الرد
+    const text = response.text();
+
+    // إرسال النتيجة
     return res.json({
       text,
     });
@@ -63,6 +67,7 @@ ${topic}
 
     return res.status(500).json({
       error: "AI generation failed",
+      details: error.message,
     });
   }
 });
@@ -71,5 +76,5 @@ ${topic}
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
